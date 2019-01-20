@@ -3,7 +3,12 @@ Reviewを触って動かしてみてみるまでやる
 
 # 参考ページ
 
-https://review-knowledge-ja.readthedocs.io/ja/latest/faq/faq-usage.html
+* インストールに関して
+    * https://review-knowledge-ja.readthedocs.io/ja/latest/faq/faq-usage.html
+* クイックスタートガイド
+    * https://github.com/kmuto/review/blob/master/doc/quickstart.ja.md
+* フォーマットガイド
+    * https://github.com/kmuto/review/blob/master/doc/format.ja.md
 
 # ステップ
 
@@ -13,6 +18,8 @@ https://review-knowledge-ja.readthedocs.io/ja/latest/faq/faq-usage.html
 * Docker版をCIで回せるようにする
 
 ## gem 版でやってみる
+
+クイックスタートガイドを参照
 
 1. Gemをinstallする
     1. `gem install review`
