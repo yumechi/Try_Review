@@ -35,8 +35,8 @@ jobs:
       - deploy:
           command: |
             echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-            filename="/tmp/book-"$(date +%Y%m%d_%H%M%S)".pdf"
-            mv /tmp/book.pdf $filename
+            filename="./tmp/book-"$(date +%Y%m%d_%H%M%S)".pdf"
+            mv ./tmp/book.pdf $filename
             gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
 
 workflows:
