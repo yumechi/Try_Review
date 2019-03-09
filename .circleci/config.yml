@@ -2,7 +2,7 @@ version: 2
 jobs:
     build:
         docker:
-            - image: circleci/ruby:2.6.0-node-browsers
+            - image: circleci/ruby:2.6.0-node-browsers-legacy
               working_directory: ~/sample
               steps:
                   - checkout
