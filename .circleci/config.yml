@@ -8,17 +8,24 @@ jobs:
       - run:
           name: Build PDF
           command: rake clean pdf
-          working_directory: ./sample
+          working_directory: ~/sample
       - store_artifacts:
-          path: ./sample/book.pdf
+          path: ~/sample/book.pdf
           destination: book.pdf
-
+      - save_cache:
+          key: build-{{ .Revision }}
+          paths:
+            - ~/sample/book.pdf
   deploy:
     docker:
       - image: circleci/golang
-    working_directory: ./sample
+    working_directory: ~/sample
     steps:
       - run: go get github.com/prasmussen/gdrive
+      # 成果物をリストア
+      - restore_cache:
+          keys:
+            - build-{{ .Revision }}
       - deploy:
           command: |
             echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
