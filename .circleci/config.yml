@@ -9,10 +9,13 @@ jobs:
           name: Build PDF
           command: rake clean pdf
           working_directory: ~/sample
+      - store_artifacts:
+          path: ~/sample/book.pdf
+          destination: book.pdf
       - save_cache:
           key: build-{{ .Revision }}
           paths:
-            - ~/sample/
+            - ~/sample
   deploy:
     docker:
       - image: circleci/golang
