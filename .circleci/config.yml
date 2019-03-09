@@ -2,7 +2,6 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang
       - image: vvakame/review:3.1
     steps:
       - checkout
@@ -13,16 +12,38 @@ jobs:
       - run:
           name: move book
           command: |
-            mkdir build
-            mv ./sample/book.pdf build/
-            chmod -R 777 build
+            mkdir /build
+            chmod -R 777 /build
+            mv ./sample/book.pdf /tmp
       - store_artifacts:
-          path: ./build/book.pdf
+          path: /tmp/book.pdf
           destination: book.pdf
+      - save_cache:
+          key: build-{{ .Revision }}
+          paths:
+            - ./tmp
+  deploy:
+    docker:
+      - image: circleci/golang
+    working_directory: ~/deploy
+    steps:
       - run: go get github.com/prasmussen/gdrive
+      # 成果物をリストア
+      - restore_cache:
+          keys:
+            - build-{{ .Revision }}
       - deploy:
           command: |
             echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-            filename="./build/book-"$(date +%Y%m%d_%H%M%S)".pdf"
-            mv ./build//book.pdf $filename
+            filename="/tmp/book-"$(date +%Y%m%d_%H%M%S)".pdf"
+            mv /tmp/book.pdf $filename
             gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
