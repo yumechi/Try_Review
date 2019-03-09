@@ -12,8 +12,7 @@ jobs:
       - run:
           name: move book
           command: |
-            mkdir /build
-            chmod -R 777 /build
+            chmod -R 777 /tmp
             mv ./sample/book.pdf /tmp
       - store_artifacts:
           path: /tmp/book.pdf
