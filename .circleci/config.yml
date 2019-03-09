@@ -12,20 +12,20 @@ jobs:
       - run:
           name: move book
           command: |
-            mkdir tmp
-            chmod -R 777 ./tmp
-            mv ./sample/book.pdf ./tmp
+            mkdir build
+            chmod -R 777 ./build
+            mv ./sample/book.pdf ./build
       - store_artifacts:
-          path: ./tmp/book.pdf
+          path: ./build/book.pdf
           destination: book.pdf
       - save_cache:
           key: build-{{ .Revision }}
           paths:
-            - ./tmp
+            - ./build
   deploy:
     docker:
       - image: circleci/golang
-    working_directory: ~/deploy
+    working_directory: ~/build
     steps:
       - run: go get github.com/prasmussen/gdrive
       # 成果物をリストア
@@ -35,8 +35,8 @@ jobs:
       - deploy:
           command: |
             echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-            filename="./tmp/book-"$(date +%Y%m%d_%H%M%S)".pdf"
-            mv ./tmp/book.pdf $filename
+            filename="./build/book-"$(date +%Y%m%d_%H%M%S)".pdf"
+            mv ./build/book.pdf $filename
             gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
 
 workflows:
