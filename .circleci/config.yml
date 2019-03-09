@@ -9,13 +9,17 @@ jobs:
           name: Build PDF
           command: rake clean pdf
           working_directory: ./sample
+      - build:
+          command: |
+            mv ./sample/book.pdf build/
+            chmod -R 777 build
       - store_artifacts:
-          path: ./sample/book.pdf
+          path: ./build/book.pdf
           destination: book.pdf
       - save_cache:
           key: build-{{ .Revision }}
           paths:
-            - ./sample
+            - ./build
   deploy:
     docker:
       - image: circleci/golang
@@ -29,8 +33,8 @@ jobs:
       - deploy:
           command: |
             echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-            filename="~/sample/book-"$(date +%Y%m%d_%H%M%S)".pdf"
-            mv ~/sample/book.pdf $filename
+            filename="./build/book-"$(date +%Y%m%d_%H%M%S)".pdf"
+            mv ./build//book.pdf $filename
             gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
 
 workflows:
