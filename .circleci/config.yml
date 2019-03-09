@@ -28,6 +28,7 @@ jobs:
     working_directory: ~/build
     steps:
       - run: go get github.com/prasmussen/gdrive
+      # 成果物をリストア
       - restore_cache:
           keys:
             - build-{{ .Revision }}
@@ -42,7 +43,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      # - build
-      - deploy
-          # requires:
-          #   - build
+      - build
+      - deploy:
+          requires:
+            - build
