@@ -1,45 +1,46 @@
 version: 2
 jobs:
-    build:
-        docker:
-            - image: vvakame/review
-                steps:
-                    - checkout
-                    - run:
-                        name: Build PDF
-                        command: rake clean pdf
-                        working_directory: ./sample
-                    - store_artifacts:
-                        key: build-{{ .Revision }}
-                        path: ./samle/book.pdf
-                        destination: book.pdf
-
-    # gdriveを使ってPDF（が入っているディレクトリ）をデプロイするジョブ
-    deploy:
-        docker:
-            # gdriveをソースからコンパイルするのでgolang環境が必要
-            - image: circleci/golang
-        working_directory: ./sample
+  build:
+    docker:
+      - image: vvakame/review
         steps:
-            # gdriveをインストール
-            - run: go get github.com/prasmussen/gdrive
-            # 成果物をリストア
-            - restore_cache:
-                keys:
-                    - build-{{ .Revision }}
-            - deploy:
-                command: |
-                    # 環境変数から認証情報を取得してJSONファイルに出力
-                    echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-                    # 成果物のディレクトリ名を日時でリネーム
-                    filename=`date +%Y%m%d_%H%M%S` && mv build $dirname
-                    # 成果物のディレクトリを丸ごとデプロイ
-                    gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
+          - checkout
+          - run:
+            name: Build PDF
+            command: rake clean pdf
+            working_directory: ./sample
+          - store_artifacts:
+            key: build-{{ .Revision }}
+            path: ./samle/book.pdf
+            destination: book.pdf
 
-version: 2
+  # gdriveを使ってPDF（が入っているディレクトリ）をデプロイするジョブ
+  deploy:
+    docker:
+      # gdriveをソースからコンパイルするのでgolang環境が必要
+      - image: circleci/golang
+    working_directory: ./sample
+    steps:
+      # gdriveをインストール
+      - run: go get github.com/prasmussen/gdrive
+      # 成果物をリストア
+      - restore_cache:
+        keys:
+          - build-{{ .Revision }}
+      - deploy:
+        command: |
+          # 環境変数から認証情報を取得してJSONファイルに出力
+          echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
+          # 成果物のディレクトリ名を日時でリネーム
+          filename=`date +%Y%m%d_%H%M%S` && mv build $dirname
+          # 成果物のディレクトリを丸ごとデプロイ
+          gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
+
+workflows:
+  version: 2
     build_and_deploy:
-        jobs:
-            - build
-            - deploy:
-                requires:
-                    - build
+    jobs:
+      - build
+      - deploy:
+        requires:
+          - build
