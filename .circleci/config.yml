@@ -3,16 +3,16 @@ jobs:
   build:
     docker:
       - image: vvakame/review
-        steps:
-          - checkout
-          - run:
-            name: Build PDF
-            command: rake clean pdf
-            working_directory: ./sample
-          - store_artifacts:
-            key: build-{{ .Revision }}
-            path: ./samle/book.pdf
-            destination: book.pdf
+    steps:
+      - checkout
+      - run:
+          name: Build PDF
+          command: rake clean pdf
+          working_directory: ./sample
+      - store_artifacts:
+          key: build-{{ .Revision }}
+          path: ./samle/book.pdf
+          destination: book.pdf
 
   # gdriveを使ってPDF（が入っているディレクトリ）をデプロイするジョブ
   deploy:
@@ -25,8 +25,8 @@ jobs:
       - run: go get github.com/prasmussen/gdrive
       # 成果物をリストア
       - restore_cache:
-        keys:
-          - build-{{ .Revision }}
+          keys:
+            - build-{{ .Revision }}
       - deploy:
         command: |
           # 環境変数から認証情報を取得してJSONファイルに出力
