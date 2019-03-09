@@ -12,16 +12,16 @@ jobs:
       - run:
           name: move book
           command: |
-            mkdir build
-            mv ./sample/book.pdf ./build
-            chmod -R 777 ./build
+            mkdir /build
+            mv ./sample/book.pdf /build
+            chmod -R 777 /build
       - store_artifacts:
-          path: ./build/book.pdf
+          path: /build/book.pdf
           destination: book.pdf
       - save_cache:
           key: build-{{ .Revision }}
           paths:
-            - ./build
+            - /build
   deploy:
     docker:
       - image: circleci/golang
