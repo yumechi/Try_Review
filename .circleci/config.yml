@@ -28,6 +28,10 @@ jobs:
     steps:
       - run: go get github.com/prasmussen/gdrive
       # 成果物をリストア
+      - run:
+          name: tmp permisson
+          command: |
+            chmod -R 777 /tmp
       - restore_cache:
           keys:
             - build-{{ .Revision }}
