@@ -2,8 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: vvakame/review:3.1
       - image: circleci/golang
+      - image: vvakame/review:3.1
     steps:
       - checkout
       - run:
