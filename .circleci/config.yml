@@ -9,8 +9,7 @@ jobs:
           name: Build PDF
           command: rake clean pdf
           working_directory: ./sample
-      - build:
-          command: |
+      - command: |
             mv ./sample/book.pdf build/
             chmod -R 777 build
       - store_artifacts:
