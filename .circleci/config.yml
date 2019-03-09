@@ -10,30 +10,20 @@ jobs:
           command: rake clean pdf
           working_directory: ./sample
       - store_artifacts:
-          key: build-{{ .Revision }}
           path: ./sample/book.pdf
           destination: book.pdf
 
-  # gdriveを使ってPDF（が入っているディレクトリ）をデプロイするジョブ
   deploy:
     docker:
-      # gdriveをソースからコンパイルするのでgolang環境が必要
       - image: circleci/golang
     working_directory: ./sample
     steps:
-      # gdriveをインストール
       - run: go get github.com/prasmussen/gdrive
-      # 成果物をリストア
-      - restore_cache:
-          keys:
-            - build-{{ .Revision }}
       - deploy:
         command: |
-          # 環境変数から認証情報を取得してJSONファイルに出力
           echo $GOOGLE_SERVICE_ACCOUNT_CREDENTIAL > credential.json
-          # 成果物のディレクトリ名を日時でリネーム
-          filename=`date +%Y%m%d_%H%M%S` && mv build $dirname
-          # 成果物のディレクトリを丸ごとデプロイ
+          filename="./sample/book-"$(date +%Y%m%d_%H%M%S)".pdf"
+          mv ./sample/book.pdf $filename
           gdrive --config $(pwd) --service-account credential.json upload -p ${GOOGLE_DRIVE_FOLDER} $filename
 
 workflows:
