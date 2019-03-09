@@ -11,7 +11,7 @@ jobs:
           working_directory: ./sample
       - run:
           name: move book
-          - command: |
+          command: |
             mv ./sample/book.pdf build/
             chmod -R 777 build
       - store_artifacts:
