@@ -7,6 +7,7 @@ then
 fi
 
 filename=`date "+%Y-%m-%d-%H%M%S"`-`git show --pretty=format:'%H.pdf' | head -n1 | cut -c 1-7`.pdf
+filename="sample_test/${filename}"
 
 echo "Upload $1 to $filename"
 
